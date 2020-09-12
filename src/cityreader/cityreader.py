@@ -1,5 +1,15 @@
 # Create a class to hold a city location. Call the class "City". It should have
 # fields for name, lat and lon (representing latitude and longitude).
+import csv 
+
+class City:
+  def __init__(self, name, lat, lon):
+    self.name = name
+    self.lat = lat
+    self.lon = lon
+
+    def __str__(self):
+      return f"{self.name}, Lat: {self.lat}, Lon: {self.lon}"
 
 
 # We have a collection of US cities with population over 750,000 stored in the
@@ -21,8 +31,16 @@ def cityreader(cities=[]):
   # Ensure that the lat and lon valuse are all floats
   # For each city record, create a new City instance and add it to the 
   # `cities` list
+  out = open('cities.csv', 'r')
+  data = csv.reader(out)
+  data = [row for row in data]
+  out.close()
+
+  for x in range(1,len(data)):
+    new_city = City(data[x][0], float(data[x][3]), float(data[x][4]))
+    cities.append(new_city)  
     
-    return cities
+  return cities
 
 cityreader(cities)
 
@@ -60,12 +78,47 @@ for c in cities:
 # Salt Lake City: (40.7774,-111.9301)
 
 # TODO Get latitude and longitude values from the user
-
+lat1 = input('Enter lat1: ')
+lon1 = input('Enter lon1: ')
+lat2 = input('Enter lat2: ')
+lon2 = input('Enter lon2: ')
+lat1 = float(lat1)
+lon1 = float(lon1)
+lat2 = float(lat2)
+lon2 = float(lon2)
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # within will hold the cities that fall within the specified region
   within = []
   
   # Go through each city and check to see if it falls within 
   # the specified coordinates.
+  for city in cities:
+    lat_inrange = False
+    lon_inrange = False
+    
+    # get city lat and lon
+    city_lat = float(city.lat)
+    city_lon = float(city.lon)
+    # are lat and lon in range?
+    if lat1 < lat2:
+      if city_lat > lat1 and city_lat < lat2:
+        lat_inrange = True
+    if lat1 > lat2:
+      if city_lat < lat1 and city_lat > lat2:
+        lat_inrange = True 
+    if lon1 < lon2:
+      if city_lon > lon1 and city_lon < lon2:
+        lon_inrange = True
+    if lon1 > lon2:
+      if city_lon < lon1 and city_lon > lon2:
+        lon_inrange = True
+    # is the city in the square?
+    if lat_inrange == True and lon_inrange == True:
+      within.append(city)
 
   return within
+
+in_cities = cityreader_stretch(lat1, lon1, lat2, lon2, cities=cities)
+
+for city in in_cities:
+  print(city)
